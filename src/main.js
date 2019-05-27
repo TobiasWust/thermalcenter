@@ -87,7 +87,7 @@ class playGame extends Phaser.Scene {
     if (direction === 1) this.brakeRight.y = p.y;
     this.glider.flightAngle = (this.brakeRight.y - this.brakeLeft.y)/game.config.height;
     this.glider.setAngularVelocity(gameOptions.gliderTurnSpeed * this.glider.flightAngle);
-    this.glider.flightSpeed = (1 - (this.brakeLeft.y + this.brakeLeft.x) / game.config.height / 2) * gameOptions.gliderSpeed
+    this.glider.flightSpeed = (1 - (this.brakeLeft.y + this.brakeRight.y) / game.config.height / 2) * gameOptions.gliderSpeed
   }
 
   update() {
