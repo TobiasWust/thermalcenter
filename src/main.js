@@ -8,7 +8,7 @@ const gameOptions = {
   gliderSpeed: 70,
   gliderTurnSpeed: 200,
   maxLift: 6,
-  time: 20000
+  time: 40000
 }
 
 class playGame extends Phaser.Scene {
