@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 
 const gliderSprite = require('../glider.png');
 const level1 = require('../level4.png');
+const brake = require('../brake.png');
 
 let game;
 const gameOptions = {
@@ -19,6 +20,7 @@ class playGame extends Phaser.Scene {
   preload() {
     this.load.image('glider', gliderSprite);
     this.load.image('level1', level1);
+    this.load.image('brake', brake);
   }
 
   create() {
@@ -30,15 +32,13 @@ class playGame extends Phaser.Scene {
 
     // this.level1 = this.physics.add.sprite(game.config.width / 2, game.config.height / 2, 'level1');
     this.glider = this.physics.add.sprite(game.config.width / 2, game.config.height / 5 * 4, 'glider');
+    this.brakeLeft = this.physics.add.sprite(game.config.width / 2 / 5, game.config.height / 3, 'brake');
+    this.brakeRight = this.physics.add.sprite(game.config.width - game.config.width / 2 / 5 , game.config.height / 3, 'brake');
 
     this.canvas = this.textures.createCanvas('map', src.width, src.height).draw(0, 0, src);
 
     this.text = this.add.text(10, 10, '', { font: '16px Courier', fill: '#00ff00' });
-    this.input.keyboard.on('keydown', this.moveglider, this);
-    this.input.keyboard.on('keyup', this.stopglider, this);
     this.input.on('pointermove', this.moveglider, this);
-    this.input.on('pointerup', this.stopglider, this);
-
     this.timer = this.time.addEvent({
       delay: gameOptions.time
     });
@@ -49,10 +49,6 @@ class playGame extends Phaser.Scene {
     const angle = Math.abs((game.config.width/2 - p.x)/game.config.width * 2);
     this.glider.setAngularVelocity(gameOptions.gliderTurnSpeed * direction * angle);
     console.log(p);
-  }
-
-  stopglider() {
-    this.glider.setAngularVelocity(0);
   }
 
   update() {
