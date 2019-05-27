@@ -38,8 +38,8 @@ class playGame extends Phaser.Scene {
     this.canvas = this.textures.createCanvas('map', src.width, src.height).draw(0, 0, src);
 
     this.text = this.add.text(10, 10, '', { font: '16px Courier', fill: '#00ff00' });
-    this.input.pointer1.on('pointermove', this.moveglider, this);
-    this.input.pointer2.on('pointermove', this.moveglider, this);
+    this.input.on('pointermove', this.moveglider, this);
+    // this.input.on('pointermove', this.moveglider, this);
     // this.input.on('pointerup', this.stopglider, this);
     this.timer = this.time.addEvent({
       delay: gameOptions.time
