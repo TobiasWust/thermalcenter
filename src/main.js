@@ -60,19 +60,21 @@ class playGame extends Phaser.Scene {
   // }
 
   update() {
-    if (this.timer.getProgress() === 1) {
-      this.physics.destroy();
-      return;
-    }
+    // if (this.timer.getProgress() === 1) {
+    //   this.physics.destroy();
+    //   return;
+    // }
     const pixel = new Phaser.Display.Color();
+    const lift = pixel.alpha > 0 ? (1 - pixel.v) * gameOptions.maxLift : 0;
+
     this.glider.x = Phaser.Math.Wrap(this.glider.x, 0, game.config.width);
+    this.glider.y = Phaser.Math.Wrap(this.glider.y, 0, game.config.height);
     this.physics.velocityFromRotation(this.glider.rotation - Phaser.Math.PI2/4, gameOptions.gliderSpeed, this.glider.body.velocity);
     // this.physics.world.collide(this.glider, this.horizontalBarrierGroup, () => {
     //   this.scene.start('PlayGame');
     // }, null, this);
-    this.physics.world.wrap(this.glider, 32);
+    // this.physics.world.wrap(this.glider, 32);
     this.canvas.getPixel(this.glider.x, this.glider.y, pixel)
-    const lift = pixel.alpha > 0 ? (1 - pixel.v) * gameOptions.maxLift : 0;
     this.score.height += (lift/60);
     this.score.maxLift = lift > this.score.maxLift ? lift : this.score.maxLift;
     this.text.setText(
@@ -95,6 +97,9 @@ window.onload = () => {
       parent: 'thegame',
       width: 320,
       height: 480
+    },
+    input: {
+      activePointers: 2,
     },
     scene: playGame,
     physics: {
