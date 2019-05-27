@@ -7,7 +7,8 @@ const brake = require('../brake.png');
 let game;
 const gameOptions = {
   startHeight: 50,
-  gliderSpeed: 90,
+  moveSpeed: 2.5,
+  gliderSpeed: 35,
   gliderTurnSpeed: 200,
   maxLift: 9,
   time: 60000,
@@ -87,7 +88,7 @@ class playGame extends Phaser.Scene {
     if (direction === 1) this.brakeRight.y = p.y;
     this.glider.flightAngle = (this.brakeRight.y - this.brakeLeft.y)/game.config.height;
     this.glider.setAngularVelocity(gameOptions.gliderTurnSpeed * this.glider.flightAngle);
-    this.glider.flightSpeed = (1 - (this.brakeLeft.y + this.brakeRight.y) / game.config.height / 2) * gameOptions.gliderSpeed
+    this.glider.flightSpeed = (1-((this.brakeLeft.y + this.brakeRight.y) / game.config.height)) * 10 + gameOptions.gliderSpeed;
   }
 
   update() {
@@ -99,16 +100,16 @@ class playGame extends Phaser.Scene {
     
     this.glider.x = Phaser.Math.Wrap(this.glider.x, 0, game.config.width);
     this.glider.y = Phaser.Math.Wrap(this.glider.y, 0, game.config.height);
-    this.physics.velocityFromRotation(this.glider.rotation - Phaser.Math.PI2/4, this.glider.flightSpeed, this.glider.body.velocity);
+    this.physics.velocityFromRotation(this.glider.rotation - Phaser.Math.PI2/4, this.glider.flightSpeed * gameOptions.moveSpeed, this.glider.body.velocity);
     // this.physics.world.collide(this.glider, this.horizontalBarrierGroup, () => {
       //   this.scene.start('PlayGame');
       // }, null, this);
       // this.physics.world.wrap(this.glider, 32);
     this.canvas.getPixel(this.glider.x, this.glider.y, pixel)
     const airLift = pixel.alpha > 0 ? (1 - pixel.v) * gameOptions.maxLift : 0;
-    const groundSpeed = (this.glider.flightSpeed / gameOptions.gliderSpeed * 50).toFixed();
+    const groundSpeed = (this.glider.flightSpeed).toFixed();
     // const lift = airLift - this.glider.getSink(groundSpeed);
-    const lift = airLift - this.glider.getSink(30) - Math.abs(this.glider.flightAngle) * gameOptions.angleSink;
+    const lift = airLift - this.glider.getSink(groundSpeed) - Math.abs(this.glider.flightAngle) * gameOptions.angleSink;
     this.score.height += (lift/60);
     this.score.maxLift = lift > this.score.maxLift ? lift : this.score.maxLift;
     this.text.setText(
