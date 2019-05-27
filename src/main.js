@@ -6,7 +6,7 @@ const brake = require('../brake.png');
 
 let game;
 const gameOptions = {
-  gliderSpeed: 70,
+  gliderSpeed: 90,
   gliderTurnSpeed: 200,
   maxLift: 6,
   time: 40000
@@ -32,13 +32,14 @@ class playGame extends Phaser.Scene {
 
     // this.level1 = this.physics.add.sprite(game.config.width / 2, game.config.height / 2, 'level1');
     this.glider = this.physics.add.sprite(game.config.width / 2, game.config.height / 5 * 4, 'glider');
+    this.glider.flightSpeed = 0.7;
     this.brakeLeft = this.physics.add.sprite(game.config.width / 2 / 5, game.config.height / 3, 'brake');
     this.brakeRight = this.physics.add.sprite(game.config.width - game.config.width / 2 / 5 , game.config.height / 3, 'brake');
 
     this.canvas = this.textures.createCanvas('map', src.width, src.height).draw(0, 0, src);
 
     this.text = this.add.text(10, 10, '', { font: '16px Courier', fill: '#00ff00' });
-    this.input.on('pointermove', this.moveglider, this);
+    // this.input.on('pointermove', this.moveglider, this);
     // this.input.on('pointermove', this.moveglider, this);
     // this.input.on('pointerup', this.stopglider, this);
     this.timer = this.time.addEvent({
@@ -53,6 +54,8 @@ class playGame extends Phaser.Scene {
     // const angle = Math.abs((game.config.width/2 - p.x)/game.config.width * 2);
     const angle = (this.brakeRight.y - this.brakeLeft.y)/game.config.height;
     this.glider.setAngularVelocity(gameOptions.gliderTurnSpeed * angle);
+    // this.glider.flightSpeed = 5;
+    this.glider.flightSpeed = (1 - (this.brakeLeft.y + this.brakeLeft.x) / game.config.height / 2) * gameOptions.gliderSpeed
   }
 
   // stopglider() {
@@ -71,7 +74,7 @@ class playGame extends Phaser.Scene {
 
     this.glider.x = Phaser.Math.Wrap(this.glider.x, 0, game.config.width);
     this.glider.y = Phaser.Math.Wrap(this.glider.y, 0, game.config.height);
-    this.physics.velocityFromRotation(this.glider.rotation - Phaser.Math.PI2/4, gameOptions.gliderSpeed, this.glider.body.velocity);
+    this.physics.velocityFromRotation(this.glider.rotation - Phaser.Math.PI2/4, this.glider.flightSpeed, this.glider.body.velocity);
     // this.physics.world.collide(this.glider, this.horizontalBarrierGroup, () => {
     //   this.scene.start('PlayGame');
     // }, null, this);
@@ -84,6 +87,7 @@ class playGame extends Phaser.Scene {
 maxLift: ${this.score.maxLift.toFixed(1)} m/s
 Timer: ${(gameOptions.time/1000 - this.timer.getElapsedSeconds()).toFixed()}
 Height: ${this.score.height.toFixed()}
+Speed: ${this.glider.flightSpeed}
 `
     );
   }
