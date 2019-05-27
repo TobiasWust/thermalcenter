@@ -49,7 +49,8 @@ class playGame extends Phaser.Scene {
     const direction = (p.x < game.config.width / 2 || p.code === 'ArrowLeft') ? -1 : 1;
     if (direction === -1) this.brakeLeft.y = p.y;
     if (direction === 1) this.brakeRight.y = p.y;
-    const angle = Math.abs((game.config.width/2 - p.x)/game.config.width * 2);
+    // const angle = Math.abs((game.config.width/2 - p.x)/game.config.width * 2);
+    const angle = Math.abs(this.brakeLeft.y - this.brakeRight.y)/game.config.height;
     this.glider.setAngularVelocity(gameOptions.gliderTurnSpeed * direction * angle);
     console.log(p);
   }
