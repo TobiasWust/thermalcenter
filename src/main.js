@@ -38,7 +38,8 @@ class playGame extends Phaser.Scene {
     this.canvas = this.textures.createCanvas('map', src.width, src.height).draw(0, 0, src);
 
     this.text = this.add.text(10, 10, '', { font: '16px Courier', fill: '#00ff00' });
-    this.input.on('pointermove', this.moveglider, this);
+    this.input.pointer1.on('pointermove', this.moveglider, this);
+    this.input.pointer2.on('pointermove', this.moveglider, this);
     // this.input.on('pointerup', this.stopglider, this);
     this.timer = this.time.addEvent({
       delay: gameOptions.time
@@ -50,8 +51,8 @@ class playGame extends Phaser.Scene {
     if (direction === -1) this.brakeLeft.y = p.y;
     if (direction === 1) this.brakeRight.y = p.y;
     // const angle = Math.abs((game.config.width/2 - p.x)/game.config.width * 2);
-    const angle = Math.abs(this.brakeLeft.y - this.brakeRight.y)/game.config.height;
-    this.glider.setAngularVelocity(gameOptions.gliderTurnSpeed * direction * angle);
+    const angle = (this.brakeLeft.y - this.brakeRight.y)/game.config.height;
+    this.glider.setAngularVelocity(gameOptions.gliderTurnSpeed * angle);
     console.log(p);
   }
 
