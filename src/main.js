@@ -91,10 +91,10 @@ class playGame extends Phaser.Scene {
   }
 
   update() {
-    if (this.timer.getProgress() === 1 || this.score.height <= 0) {
-      this.physics.destroy();
-      return;
-    }
+    // if (this.timer.getProgress() === 1 || this.score.height <= 0) {
+    //   this.physics.destroy();
+    //   return;
+    // }
     const pixel = new Phaser.Display.Color();
     
     this.glider.x = Phaser.Math.Wrap(this.glider.x, 0, game.config.width);
@@ -117,7 +117,6 @@ maxLift: ${this.score.maxLift.toFixed(1)} m/s
 Timer: ${(gameOptions.time/1000 - this.timer.getElapsedSeconds()).toFixed()}
 Height: ${this.score.height.toFixed(1)} m
 Speed: ${groundSpeed} km/h
-Angle: ${this.glider.flightAngle}
 `
     );
   }
