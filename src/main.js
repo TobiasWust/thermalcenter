@@ -9,8 +9,9 @@ const gameOptions = {
   startHeight: 50,
   gliderSpeed: 90,
   gliderTurnSpeed: 200,
-  maxLift: 6,
+  maxLift: 9,
   time: 60000,
+  angleSink: 1,
   polare: [
     {
       speed: 22,
@@ -64,6 +65,7 @@ class playGame extends Phaser.Scene {
     // this.level1 = this.physics.add.sprite(game.config.width / 2, game.config.height / 2, 'level1');
     this.glider = this.physics.add.sprite(game.config.width / 2, game.config.height / 5 * 4, 'glider');
     this.glider.flightSpeed = 35;
+    this.glider.flightAngle = 0;
     this.glider.getSink = (speed) => {
       return gameOptions.polare.filter(v => v.speed <= speed)
                       .sort((a, b) => b.speed - a.speed)[0].sink
@@ -83,8 +85,8 @@ class playGame extends Phaser.Scene {
     const direction = (p.x < game.config.width / 2) ? -1 : 1;
     if (direction === -1) this.brakeLeft.y = p.y;
     if (direction === 1) this.brakeRight.y = p.y;
-    const angle = (this.brakeRight.y - this.brakeLeft.y)/game.config.height;
-    this.glider.setAngularVelocity(gameOptions.gliderTurnSpeed * angle);
+    this.glider.flightAngle = (this.brakeRight.y - this.brakeLeft.y)/game.config.height;
+    this.glider.setAngularVelocity(gameOptions.gliderTurnSpeed * this.glider.flightAngle);
     this.glider.flightSpeed = (1 - (this.brakeLeft.y + this.brakeLeft.x) / game.config.height / 2) * gameOptions.gliderSpeed
   }
 
@@ -106,7 +108,7 @@ class playGame extends Phaser.Scene {
     const airLift = pixel.alpha > 0 ? (1 - pixel.v) * gameOptions.maxLift : 0;
     const groundSpeed = (this.glider.flightSpeed / gameOptions.gliderSpeed * 50).toFixed();
     // const lift = airLift - this.glider.getSink(groundSpeed);
-    const lift = airLift - this.glider.getSink(30);
+    const lift = airLift - this.glider.getSink(30) - Math.abs(this.glider.flightAngle) * gameOptions.angleSink;
     this.score.height += (lift/60);
     this.score.maxLift = lift > this.score.maxLift ? lift : this.score.maxLift;
     this.text.setText(
@@ -115,6 +117,7 @@ maxLift: ${this.score.maxLift.toFixed(1)} m/s
 Timer: ${(gameOptions.time/1000 - this.timer.getElapsedSeconds()).toFixed()}
 Height: ${this.score.height.toFixed(1)} m
 Speed: ${groundSpeed} km/h
+Angle: ${this.glider.flightAngle}
 `
     );
   }
