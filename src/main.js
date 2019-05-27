@@ -36,8 +36,8 @@ class playGame extends Phaser.Scene {
     this.text = this.add.text(10, 10, '', { font: '16px Courier', fill: '#00ff00' });
     this.input.keyboard.on('keydown', this.moveglider, this);
     this.input.keyboard.on('keyup', this.stopglider, this);
-    this.input.on('pointerdown', this.moveglider, this);
-    this.input.on('pointerup', this.stopglider, this);
+    this.input.on('pointermove', this.moveglider, this);
+    // this.input.on('pointerup', this.stopglider, this);
 
     this.timer = this.time.addEvent({
       delay: gameOptions.time
@@ -46,12 +46,14 @@ class playGame extends Phaser.Scene {
 
   moveglider(p) {
     const direction = (p.x < game.config.width / 2 || p.code === 'ArrowLeft') ? -1 : 1;
-    this.glider.setAngularVelocity(gameOptions.gliderTurnSpeed * direction);
+    const angle = Math.abs((game.config.width/2 - p.x)/game.config.width * 2);
+    this.glider.setAngularVelocity(gameOptions.gliderTurnSpeed * direction * angle);
+    console.log(p);
   }
 
-  stopglider() {
-    this.glider.setAngularVelocity(0);
-  }
+  // stopglider() {
+  //   this.glider.setAngularVelocity(0);
+  // }
 
   update() {
     if (this.timer.getProgress() === 1) {
