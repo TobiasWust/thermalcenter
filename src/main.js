@@ -10,7 +10,7 @@ const gameOptions = {
   gliderSpeed: 90,
   gliderTurnSpeed: 200,
   maxLift: 6,
-  time: 40000,
+  time: 60000,
   polare: [
     {
       speed: 22,
