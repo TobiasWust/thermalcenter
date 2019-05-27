@@ -92,10 +92,10 @@ class playGame extends Phaser.Scene {
   }
 
   update() {
-    // if (this.timer.getProgress() === 1 || this.score.height <= 0) {
-    //   this.physics.destroy();
-    //   return;
-    // }
+    if (this.timer.getProgress() === 1 || this.score.height <= 0) {
+      this.physics.destroy();
+      return;
+    }
     const pixel = new Phaser.Display.Color();
     
     this.glider.x = Phaser.Math.Wrap(this.glider.x, 0, game.config.width);
