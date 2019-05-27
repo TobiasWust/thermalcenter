@@ -6,7 +6,7 @@ const level1 = require('../level4.png');
 let game;
 const gameOptions = {
   gliderSpeed: 70,
-  gliderTurnSpeed: 120,
+  gliderTurnSpeed: 200,
   maxLift: 6,
   time: 20000
 }
@@ -37,7 +37,7 @@ class playGame extends Phaser.Scene {
     this.input.keyboard.on('keydown', this.moveglider, this);
     this.input.keyboard.on('keyup', this.stopglider, this);
     this.input.on('pointermove', this.moveglider, this);
-    // this.input.on('pointerup', this.stopglider, this);
+    this.input.on('pointerup', this.stopglider, this);
 
     this.timer = this.time.addEvent({
       delay: gameOptions.time
@@ -51,9 +51,9 @@ class playGame extends Phaser.Scene {
     console.log(p);
   }
 
-  // stopglider() {
-  //   this.glider.setAngularVelocity(0);
-  // }
+  stopglider() {
+    this.glider.setAngularVelocity(0);
+  }
 
   update() {
     if (this.timer.getProgress() === 1) {
