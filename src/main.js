@@ -51,9 +51,8 @@ class playGame extends Phaser.Scene {
     if (direction === -1) this.brakeLeft.y = p.y;
     if (direction === 1) this.brakeRight.y = p.y;
     // const angle = Math.abs((game.config.width/2 - p.x)/game.config.width * 2);
-    const angle = (this.brakeLeft.y - this.brakeRight.y)/game.config.height;
+    const angle = (this.brakeRight.y - this.brakeLeft.y)/game.config.height;
     this.glider.setAngularVelocity(gameOptions.gliderTurnSpeed * angle);
-    console.log(p);
   }
 
   // stopglider() {
@@ -61,6 +60,8 @@ class playGame extends Phaser.Scene {
   // }
 
   update() {
+    if (this.input.pointer1.isDown) this.moveglider(this.input.pointer1)
+    if (this.input.pointer2.isDown) this.moveglider(this.input.pointer2)
     // if (this.timer.getProgress() === 1) {
     //   this.physics.destroy();
     //   return;
