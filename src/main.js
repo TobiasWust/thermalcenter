@@ -6,10 +6,41 @@ const brake = require('../brake.png');
 
 let game;
 const gameOptions = {
+  startHeight: 50,
   gliderSpeed: 90,
   gliderTurnSpeed: 200,
   maxLift: 6,
-  time: 40000
+  time: 40000,
+  polare: [
+    {
+      speed: 22,
+      sink: 1.8
+    },
+    {
+      speed: 25,
+      sink: 1.5
+    },
+    {
+      speed: 27,
+      sink: 1.4
+    },
+    {
+      speed: 32,
+      sink: 1.5
+    },
+    {
+      speed: 35,
+      sink: 1.6
+    },
+    {
+      speed: 40,
+      sink: 1.8
+    },
+    {
+      speed: 70,
+      sink: 2
+    }
+  ]
 }
 
 class playGame extends Phaser.Scene {
@@ -26,23 +57,23 @@ class playGame extends Phaser.Scene {
   create() {
     this.score = {
       maxLift: 0,
-      height: 0
+      height: gameOptions.startHeight
     };
     const src = this.textures.get('level1').getSourceImage();
 
     // this.level1 = this.physics.add.sprite(game.config.width / 2, game.config.height / 2, 'level1');
     this.glider = this.physics.add.sprite(game.config.width / 2, game.config.height / 5 * 4, 'glider');
-    this.glider.flightSpeed = 0.7;
+    this.glider.flightSpeed = 35;
+    this.glider.getSink = (speed) => {
+      return gameOptions.polare.filter(v => v.speed <= speed)
+                      .sort((a, b) => b.speed - a.speed)[0].sink
+    }
     this.brakeLeft = this.physics.add.sprite(game.config.width / 2 / 5, game.config.height / 3, 'brake');
     this.brakeRight = this.physics.add.sprite(game.config.width - game.config.width / 2 / 5 , game.config.height / 3, 'brake');
-
     this.canvas = this.textures.createCanvas('map', src.width, src.height).draw(0, 0, src);
-
     this.text = this.add.text(10, 10, '', { font: '16px Courier', fill: '#00ff00' });
     this.input.addPointer();
     this.input.on('pointermove', this.moveglider, this);
-    // this.input.on('pointermove', this.moveglider, this);
-    // this.input.on('pointerup', this.stopglider, this);
     this.timer = this.time.addEvent({
       delay: gameOptions.time
     });
@@ -57,14 +88,8 @@ class playGame extends Phaser.Scene {
     this.glider.flightSpeed = (1 - (this.brakeLeft.y + this.brakeLeft.x) / game.config.height / 2) * gameOptions.gliderSpeed
   }
 
-  // stopglider() {
-  //   console.log('stop glider');
-  // }
-
   update() {
-    // if (this.input.pointer1.isDown) this.moveglider(this.input.pointer1)
-    // if (this.input.pointer2.isDown) this.moveglider(this.input.pointer2)
-    if (this.timer.getProgress() === 1) {
+    if (this.timer.getProgress() === 1 || this.score.height <= 0) {
       this.physics.destroy();
       return;
     }
@@ -78,17 +103,18 @@ class playGame extends Phaser.Scene {
       // }, null, this);
       // this.physics.world.wrap(this.glider, 32);
     this.canvas.getPixel(this.glider.x, this.glider.y, pixel)
-    const lift = pixel.alpha > 0 ? (1 - pixel.v) * gameOptions.maxLift : 0;
+    const airLift = pixel.alpha > 0 ? (1 - pixel.v) * gameOptions.maxLift : 0;
+    const groundSpeed = (this.glider.flightSpeed / gameOptions.gliderSpeed * 50).toFixed();
+    // const lift = airLift - this.glider.getSink(groundSpeed);
+    const lift = airLift - this.glider.getSink(30);
     this.score.height += (lift/60);
     this.score.maxLift = lift > this.score.maxLift ? lift : this.score.maxLift;
     this.text.setText(
 `Lift: ${lift.toFixed(1)} m/s
 maxLift: ${this.score.maxLift.toFixed(1)} m/s
 Timer: ${(gameOptions.time/1000 - this.timer.getElapsedSeconds()).toFixed()}
-Height: ${this.score.height.toFixed()} m
-Speed: ${this.glider.flightSpeed / gameOptions.gliderSpeed * 50} km/h
-P1: ${this.input.pointer1.isDown}
-P2: ${this.input.pointer2.isDown}
+Height: ${this.score.height.toFixed(1)} m
+Speed: ${groundSpeed} km/h
 `
     );
   }
